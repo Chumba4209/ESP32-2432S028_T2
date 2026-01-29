@@ -30,6 +30,13 @@ int pressure; // pressure of the touch
 int centerX;
 int centerY;
 
+enum ScreenState {
+  HOME_SCREEN,
+  TOUCH_SCREEN
+};
+
+ScreenState currentScreen = HOME_SCREEN;
+
 
 
 const unsigned char bitmap_carenuity_logo[] PROGMEM = {
@@ -162,82 +169,27 @@ const unsigned char bitmap_carenuity_logo[] PROGMEM = {
 
 
 };
+void displayTouchMessage() {
+  // Clear ONLY the bottom text area
+  tft.fillRect(0, 180, 320, 40, TFT_BLACK);
 
-    
-void logTouchData(int posX, int posY, int pressure)
-{
-  Serial.print("X = ");
-  Serial.print(posX);
-  Serial.print(" | Y = ");
-  Serial.print(posY);
-  Serial.print(" | Pressure = ");
-  Serial.print(pressure);
-  Serial.println();
-}
-
-void displayTouchData(int posX, int posY, int pressure)
-{
-  // Clear TFT screen
-  tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  tft.setTextDatum(MC_DATUM);
 
-  // Draw text
-  int textY = 100;
-  String text = "X = " + String(posX) + "Y = " + String(posY);
-  tft.drawCentreString(text, centerX, textY, FONT_SIZE);
-
-  textY += 20;
-  text = "Pressure = " + String(pressure);
-  tft.drawCentreString(text, centerX, textY, FONT_SIZE);
-
-  tft.drawCentreString("Cynthia", centerX, 200, FONT_SIZE);
-
-  // Draw touch box
-  tft.drawRect(20, 20, 280, 200, TFT_BLUE);
-
-  tft.drawRect(50, 50, 10, 10, TFT_BLUE);
-  tft.drawRect(260, 50, 10, 10, TFT_BLUE);
-  tft.drawRect(50, 180, 10, 10, TFT_BLUE);
-  tft.drawRect(260, 180, 10, 10, TFT_BLUE);
-
-  tft.fillSmoothCircle(posX, posY, pressure/200, TFT_RED);
+  tft.drawString("Carenuity", tft.width() / 2, 200, 4);
 }
 
-void showSplashScreen() {
-  const int LOGO_W = 120;
-  const int LOGO_H = 100;
-
-  int x = (tft.width()  - LOGO_W) / 2;
-  int y = (tft.height() - LOGO_H) / 2;
-
+void drawTouchScreen() {
   tft.fillScreen(TFT_BLACK);
 
-  // // ---- Fade IN ----
-  // for (uint8_t i = 0; i <= 255; i += 25) {
-  //   uint16_t color = tft.color565(i, i, i);
-  //   tft.fillRect(x, y, LOGO_W, LOGO_H, TFT_BLACK);
-  //   tft.drawBitmap(x, y, bitmap_carenuity_logo, LOGO_W, LOGO_H, color);
-  //   delay(30);
-  // }
+  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  tft.setTextDatum(MC_DATUM);
 
-  // unsigned long startTime = millis();
+  // Big center text
+  tft.drawString("Carenuity", tft.width() / 2, tft.height() / 2, 4);
 
-  // // ---- Wait (tap OR timeout) ----
-  // while (millis() - startTime < 2000) {   // 2 seconds max
-  //   if (touchscreen.tirqTouched() && touchscreen.touched()) {
-  //     break; // user tapped → skip
-  //   }
-  // }
-
-  // // ---- Fade OUT ----
-  // for (int i = 255; i >= 0; i -= 25) {
-  //   uint16_t color = tft.color565(i, i, i);
-  //   tft.fillRect(x, y, LOGO_W, LOGO_H, TFT_BLACK);
-  //   tft.drawBitmap(x, y, bitmap_carenuity_logo, LOGO_W, LOGO_H, color);
-  //   delay(25);
-  // }
-
-  tft.fillScreen(TFT_BLACK); // clean exit
+  // Bottom text
+  tft.drawString("by Cynthia", tft.width() / 2, tft.height() - 25, 2);
 }
 
 void setup()
@@ -281,19 +233,12 @@ void setup()
 
 void loop()
 {
-  // Checks if Touchscreen is touched
   if (touchscreen.tirqTouched() && touchscreen.touched())
   {
-    // Get Touchscreen points
-    TS_Point p = touchscreen.getPoint();
-    // Calibrate Touchscreen points with map function to the correct width and height
-    posX = map(p.x, 200, 3700, 1, SCREEN_WIDTH);
-    posY = map(p.y, 240, 3800, 1, SCREEN_HEIGHT);
-    pressure = p.z;
-
-    logTouchData(posX, posY, pressure);
-    displayTouchData(posX, posY, pressure);
-
-    delay(100);
+    if (currentScreen == HOME_SCREEN) {
+      drawTouchScreen();
+      currentScreen = TOUCH_SCREEN;
+      delay(300); // debounce
+    }
   }
 }
