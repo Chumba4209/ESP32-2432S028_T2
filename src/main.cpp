@@ -268,16 +268,13 @@ void setup()
   centerX = SCREEN_WIDTH / 2;
   centerY = SCREEN_HEIGHT / 2;
 
-  tft.drawCentreString("Hi Cynthia!", centerX, 30, FONT_SIZE);
-  tft.drawCentreString("Touch the screen to test", centerX, 200, FONT_SIZE);
+  tft.drawCentreString("CARENUITY", centerX, 30, FONT_SIZE);
+  tft.drawCentreString("A Chipglobe company", centerX, 200, FONT_SIZE);
 
   int x = (tft.width() - 120) / 2;
   int y = (tft.height() - 100) / 2;
 
-  tft.fillScreen(TFT_BLACK);
-
-tft.fillScreen(TFT_BLACK);
-tft.drawBitmap(x, y, bitmap_carenuity_logo, 120, 100, TFT_WHITE);
+  tft.drawBitmap(x, y, bitmap_carenuity_logo, 120, 100, TFT_WHITE);
 
   //tft.fillScreen(TFT_BLACK);
 }
