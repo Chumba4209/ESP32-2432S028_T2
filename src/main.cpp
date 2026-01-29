@@ -221,7 +221,7 @@ void setup()
   centerY = SCREEN_HEIGHT / 2;
 
   tft.drawCentreString("CARENUITY", centerX, 30, FONT_SIZE);
-  tft.drawCentreString("A Chipglobe company", centerX, 200, FONT_SIZE);
+  tft.drawCentreString("Touchscreen to test", centerX, 200, FONT_SIZE);
 
   int x = (tft.width() - 120) / 2;
   int y = (tft.height() - 100) / 2;
